@@ -15,12 +15,5 @@
       "src": "/(.*)",
       "dest": "main.py"
     }
-  ],
-  "env": {
-    "TRELLO_KEY": "@trello-key",
-    "TRELLO_TOKEN": "@trello-token", 
-    "TRELLO_LIST_ID": "@trello-list-id",
-    "TELEGRAM_BOT": "@telegram-bot",
-    "SENHA_BOT": "@senha-bot"
-  }
+  ]
 }
