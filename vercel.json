@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "main.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/webhook",
+      "dest": "main.py"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "main.py"
+    }
+  ],
+  "env": {
+    "TRELLO_KEY": "@trello-key",
+    "TRELLO_TOKEN": "@trello-token", 
+    "TRELLO_LIST_ID": "@trello-list-id",
+    "TELEGRAM_BOT": "@telegram-bot",
+    "SENHA_BOT": "@senha-bot"
+  }
+}
