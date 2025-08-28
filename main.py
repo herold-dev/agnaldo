@@ -2,14 +2,22 @@ import telebot
 from telebot import types
 import requests
 from datetime import datetime
+import os
+from flask import Flask, request
+
+# ===== variaveis =====
+TRELLO_KEY = os.environ.get ('TRELLO_KEY'),
+TRELLO_TOKEN = os.environ.get ('TRELLO_TOKEN'),
+TRELLO_LIST_ID = os.environ.get ('TRELLO_LIST_ID'),
+TELEGRAM_BOT = os.environ.get ('TELEGRAM_BOT'),
+SENHA_BOT = os.environ.get ('SENHA_BOT'),
 
 # ===== Configurações do bot Telegram =====
-bot = telebot.TeleBot('8280281003:AAFF3DeiUcXiKpf4UPiuMI9dAXGWWyxuLEU')  # Token do seu bot
+bot = telebot.TeleBot('TELEGRAM_BOT')  # Token do seu bot
 
-# ===== Configurações do Trello =====
-TRELLO_KEY = '3178db52eaba1e53042c73bba4647f20'
-TRELLO_TOKEN = 'ATTA8d5696c9eba1e6081b930f22676f19566f0e5ea44567ae35ea0af77fe834e9b38EFE4EE6'
-TRELLO_LIST_ID = '68a4918423f12e2180552bef'
+app = Flask(__name__)
+
+usuario_data = {}
 
 # ===== Lista de riscos =====
 riscos = [
@@ -25,6 +33,18 @@ riscos = [
 
 # Dados temporários por usuário
 usuario_data = {}
+
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.headers.get('content-type') == 'application/json':
+        json_string = request.get_data() .decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return 'Deu Certo', 200
+    else: 
+        return 'Deu errado', 400
+
+    
 
 # ===== Comando personalizado: /registrar_risco =====
 @bot.message_handler(commands=['registrar_risco'])
@@ -44,7 +64,7 @@ def processar_mensagem(message: types.Message):
 
     # Etapa 1: Validar senha
     if etapa == "aguardando_senha":
-        if message.text == "teleaco123":
+        if message.text == SENHA_BOT:
             usuario_data[chat_id]["etapa"] = "aguardando_risco"
             markup = types.ReplyKeyboardMarkup(row_width=2, resize_keyboard=True)
             for risco in riscos:
@@ -94,6 +114,3 @@ def processar_mensagem(message: types.Message):
 
         # Limpa dados
         usuario_data.pop(chat_id, None)
-
-# ===== Executa o bot =====
-bot.infinity_polling()
