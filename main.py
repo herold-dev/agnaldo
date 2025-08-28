@@ -6,14 +6,14 @@ import os
 from flask import Flask, request
 
 # ===== variaveis =====
-TRELLO_KEY = os.environ.get ('TRELLO_KEY'),
-TRELLO_TOKEN = os.environ.get ('TRELLO_TOKEN'),
-TRELLO_LIST_ID = os.environ.get ('TRELLO_LIST_ID'),
-TELEGRAM_BOT = os.environ.get ('TELEGRAM_BOT'),
-SENHA_BOT = os.environ.get ('SENHA_BOT'),
+TRELLO_KEY = os.environ.get ('TRELLO_KEY')
+TRELLO_TOKEN = os.environ.get ('TRELLO_TOKEN')
+TRELLO_LIST_ID = os.environ.get ('TRELLO_LIST_ID')
+TELEGRAM_BOT = os.environ.get ('TELEGRAM_BOT')
+SENHA_BOT = os.environ.get ('SENHA_BOT')
 
 # ===== Configurações do bot Telegram =====
-bot = telebot.TeleBot('TELEGRAM_BOT')  # Token do seu bot
+bot = telebot.TeleBot(TELEGRAM_BOT)  # Token do seu bot
 
 app = Flask(__name__)
 
