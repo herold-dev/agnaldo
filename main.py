@@ -4,6 +4,7 @@ import requests
 from datetime import datetime
 import os
 from flask import Flask, request
+import threading
 
 # ===== variaveis =====
 TRELLO_KEY = os.environ.get ('TRELLO_KEY')
@@ -40,6 +41,7 @@ def webhook():
         json_string = request.get_data() .decode('utf-8')
         update = telebot.types.Update.de_json(json_string)
         bot.process_new_updates([update])
+        threading.Thread(target=bot.process_new_updates, args=([update],)).start()
         return 'Deu Certo', 200
     else: 
         return 'Deu errado', 400
