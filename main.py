@@ -3,20 +3,16 @@ from telebot import types
 import requests
 from datetime import datetime
 import os
-from flask import Flask, request
-import threading
 
 # ===== variaveis =====
-TRELLO_KEY = os.environ.get ('TRELLO_KEY')
-TRELLO_TOKEN = os.environ.get ('TRELLO_TOKEN')
-TRELLO_LIST_ID = os.environ.get ('TRELLO_LIST_ID')
-TELEGRAM_BOT = os.environ.get ('TELEGRAM_BOT')
-SENHA_BOT = os.environ.get ('SENHA_BOT')
+TRELLO_KEY = os.environ.get('TRELLO_KEY')
+TRELLO_TOKEN = os.environ.get('TRELLO_TOKEN')
+TRELLO_LIST_ID = os.environ.get('TRELLO_LIST_ID')
+TELEGRAM_BOT = os.environ.get('TELEGRAM_BOT')
+SENHA_BOT = os.environ.get('SENHA_BOT')
 
 # ===== Configurações do bot Telegram =====
-bot = telebot.TeleBot(TELEGRAM_BOT)  # Token do seu bot
-
-app = Flask(__name__)
+bot = telebot.TeleBot(TELEGRAM_BOT)
 
 usuario_data = {}
 
@@ -35,17 +31,6 @@ riscos = [
 # Dados temporários por usuário
 usuario_data = {}
 
-@app.route('/webhook', methods=['POST'])
-def webhook():
-    if request.headers.get('content-type') == 'application/json':
-        json_string = request.get_data().decode('utf-8')
-        update = telebot.types.Update.de_json(json_string)
-        bot.process_new_updates([update])
-        return 'Deu Certo', 200
-    else: 
-        return 'Deu errado', 400
-
-    
 
 # ===== Comando personalizado: /registrar_risco =====
 @bot.message_handler(commands=['registrar_risco'])
@@ -116,7 +101,7 @@ def processar_mensagem(message: types.Message):
         # Limpa dados
         usuario_data.pop(chat_id, None)
 
-# ===== Inicialização para Render =====
+# ===== Inicialização com Polling =====
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))
-    app.run(host="0.0.0.0", port=port)
+    print("🤖 Bot iniciado com polling...")
+    bot.infinity_polling()
