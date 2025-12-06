@@ -3,6 +3,7 @@ from telebot import types
 import requests
 from datetime import datetime
 import os
+from flask import Flask, request
 
 # ===== variaveis =====
 TRELLO_KEY = os.environ.get('TRELLO_KEY')
@@ -13,6 +14,9 @@ SENHA_BOT = os.environ.get('SENHA_BOT')
 
 # ===== Configurações do bot Telegram =====
 bot = telebot.TeleBot(TELEGRAM_BOT)
+
+# ===== Configuração do Flask =====
+app = Flask(__name__)
 
 usuario_data = {}
 
@@ -31,6 +35,20 @@ riscos = [
 # Dados temporários por usuário
 usuario_data = {}
 
+# ===== Rota de Health Check para UptimeRobot =====
+@app.route('/')
+def health_check():
+    return 'Bot está online! 🤖', 200
+
+# ===== Rota do Webhook do Telegram =====
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    if request.headers.get('content-type') == 'application/json':
+        json_string = request.get_data().decode('utf-8')
+        update = telebot.types.Update.de_json(json_string)
+        bot.process_new_updates([update])
+        return 'OK', 200
+    return 'Erro', 400
 
 # ===== Comando personalizado: /registrar_risco =====
 @bot.message_handler(commands=['registrar_risco'])
@@ -101,7 +119,8 @@ def processar_mensagem(message: types.Message):
         # Limpa dados
         usuario_data.pop(chat_id, None)
 
-# ===== Inicialização com Polling =====
+# ===== Inicialização para Render =====
 if __name__ == "__main__":
-    print("🤖 Bot iniciado com polling...")
-    bot.infinity_polling()
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
+
